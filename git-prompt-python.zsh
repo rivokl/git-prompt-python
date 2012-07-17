@@ -1,7 +1,7 @@
 # -*- mode: sh; -*-
 # Rivo prompt set-up
 
-export __GIT_PROMPT_DIR=~/.zsh/git-prompt-python
+local __GIT_PROMPT_DIR=~/.zsh/git-prompt-python
 
 # Allow for functions in the prompt
 setopt prompt_subst 
@@ -28,8 +28,7 @@ autoload -U colors
 colors
 
 # Set some colors
-local reset 
-reset="%{${reset_color}%}"
+local reset="%{${reset_color}%}"
 
 for color in red green blue cyan  yellow magenta black white; do
     local $color b_$color
@@ -38,27 +37,27 @@ for color in red green blue cyan  yellow magenta black white; do
 done
 
 # Colors for root and normal users
-root_color=${red}
-user_color=${green}
+local root_color=${red}
+local user_color=${green}
 
 # Default values for the appearance of the prompt. Configure at will.
 ZSH_THEME_GIT_PROMPT_PREFIX="("
 ZSH_THEME_GIT_PROMPT_SUFFIX=")"
 ZSH_THEME_GIT_PROMPT_SEPARATOR="|"
-ZSH_THEME_GIT_PROMPT_BRANCH="${b_magenta}"
+ZSH_THEME_GIT_PROMPT_BRANCH="${b_blue}"
 ZSH_THEME_GIT_PROMPT_STAGED="${red}●"
 ZSH_THEME_GIT_PROMPT_CONFLICTS="${red}✖"
-ZSH_THEME_GIT_PROMPT_CHANGED="${blue}✚"
+ZSH_THEME_GIT_PROMPT_CHANGED="${b_magenta}✚"
 ZSH_THEME_GIT_PROMPT_REMOTE=""
-ZSH_THEME_GIT_PROMPT_UNTRACKED="${b_yellow}…"
+ZSH_THEME_GIT_PROMPT_UNTRACKED="${b_yellow}⚡"
+ZSH_THEME_GIT_PROMPT_UNTRACKED_MANY="$…"
 ZSH_THEME_GIT_PROMPT_CLEAN="${b_green}✔"
 
-function precmd {
-PROMPT='%~%b$(git_super_status)
+
+PROMPT='%B%~%b$(git_super_status)
 %# ${reset}'
 
-RPROMPT='$(user_and_host)%t${reset}'
-}
+RPROMPT='$(user_and_host) %B%t%b${reset}'
 
 user_and_host() {
     local UH
@@ -71,7 +70,6 @@ user_and_host() {
 }
 
 git_super_status() {
-    precmd_update_git_vars
     local STATUS
     if [ -n "$__CURRENT_GIT_STATUS" ]; then
 	STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH${reset}"
@@ -89,10 +87,11 @@ git_super_status() {
 	    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_CHANGED$GIT_CHANGED${reset}"
 	fi
 	if [ "$GIT_UNTRACKED" -ne "0" ]; then
+	    STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED"
 	    if [ "$GIT_UNTRACKED" -lt "10" ]; then
-		STATUS="$STATUS${b_yellow}$GIT_UNTRACKED${reset}"
+		STATUS="$STATUS$GIT_UNTRACKED${reset}"
 	    else
-		STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED${reset}"
+		STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_UNTRACKED_MANY${reset}"
 	    fi
 	fi
 	if [ "$GIT_CLEAN" -eq "1" ]; then
@@ -104,30 +103,42 @@ git_super_status() {
 }
 
 #### Manage cache
+local __UPDATE_GIT_PR=1
 
+# Variables used to store git status
+local _GIT_STATUS
+local __CURRENT_GIT_STATUS
+local GIT_BRANCH
+local GIT_REMOTE
+local GIT_STAGED
+local GIT_CONFLICTS
+local GIT_CHANGED
+local GIT_UNTRACKED
+local GIT_CLEAN
 
 function precmd_update_git_vars() {
-    if [ -n "$__EXECUTED_GIT_COMMAND" ]; then
+    if [ -n "$__UPDATE_GIT_PR" ]; then
     	update_current_git_vars
-        unset __EXECUTED_GIT_COMMAND
+        unset __UPDATE_GIT_PR
     fi
 }
 
 function preexec_update_git_vars() {
     case "$2" in
         git*)
-        __EXECUTED_GIT_COMMAND=1
+        __UPDATE_GIT_PR=1
         ;;
     esac
 }
 
 function chpwd_update_git_vars() {
-    update_current_git_vars
+     __UPDATE_GIT_PR=1
 }
 
 function update_current_git_vars() {
+    unset _GIT_STATUS
     unset __CURRENT_GIT_STATUS
-    
+
     local gitstatus="$__GIT_PROMPT_DIR/gitstatus.py"
     _GIT_STATUS=`python ${gitstatus}`
     __CURRENT_GIT_STATUS=("${(@f)_GIT_STATUS}")
@@ -153,7 +164,7 @@ function titlebar() {
     [[ -t 1 ]] || return
     case $TERM in
 	xterm*|rxvt*|(dt|k|E)term)
-	    print -Pn "\e]0; %n@%M[%y] %# $1\a"
+	    print -Pn "\e]0; %n@%M|%y| %# $1\a"
 	    ;;
 	screen)
 	    print -Pn "\e]0;$1\a"
