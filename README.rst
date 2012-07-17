@@ -1,16 +1,12 @@
 Informative and efficient git prompt for zsh
 ============================================
 
-A ``zsh`` prompt that displays information about the current git repository.
-In particular the branch name, difference with remote branch, number of files staged, changed, etc.
+A ``zsh`` prompt that displays information about the current git repository. In particular the branch name, difference with remote branch, number of files staged, changed, etc.
 
-This fork was motivated by the sluggishness of the git prompt from
-`zsh-git-prompt`_, despite a prototype cache system. Getting the git
-status via python was still retained as the preferred way as it is
-much neater than the vcs_info alternative.
+This fork was motivated by the sluggishness of the git prompt from `zsh-git-prompt`_, despite a prototype cache system. Getting the git status via python was still retained as the preferred way as it is much neater than the vcs_info alternative.
 
 Examples
---------
+========
 
 The prompt may look like the following: 
 
@@ -26,10 +22,10 @@ Here is how it could look like when you are ahead by 4 commits, behind by 5 comm
 .. image:: https://github.com/olivierverdier/zsh-git-prompt/raw/master/screenshot.png
 	:alt: Example
 
-.. _zsh_git-prompt: https://github.com/olivierverdier/zsh-git-prompt
+.. _zsh-git-prompt: https://github.com/olivierverdier/zsh-git-prompt
 
 Prompt structure
-----------------
+================
 
 By default, the general appearance of the prompt is::
 
@@ -42,7 +38,8 @@ The symbols are as follows:
 	:●n: there are ``n`` staged files
 	:✖n: there are ``n`` unmerged files
 	:✚n: there are ``n`` changed but *unstaged* files
-	:⚡…: there are some untracked files
+	:⚡n: there are ``n`` untracked files (for ``n`` < 10)
+	:⚡…: there are a few untracked files
 
 * Branch Tracking Symbols
 	:↑n: ahead of remote by ``n`` commits
@@ -53,29 +50,20 @@ The symbols are as follows:
 	When the branch name starts with a colon ``:``, it means it's actually a hash, not a branch (although it should be pretty clear, unless you name your branches like hashes :-)
 
 Install
--------
+=======
 
 #. Create the directory ``~/.zsh/git-prompt-python`` if it does not exist (this location is customizable).
 #. Move the file ``gitstatus.py`` into ``~/.zsh/git-prompt-python/``.
-#. After configuring your prompt in ``git-prompt-python.zsh``, source
-the file ``git-prompt-python.zsh`` from your ``~/.zshrc`` config
-file. So, somewhere in ``~/.zshrc``, you should have::
+#. After configuring your prompt in ``git-prompt-python.zsh``, source the file ``git-prompt-python.zsh`` from your ``~/.zshrc`` config file. So, somewhere in ``~/.zshrc``, you should have::
         
 	source path/to/git-prompt-python.zsh
-	
-Alternatively, you could also configure directly your prompt in
-``~/.zshrc`` (remove the definition in ``git-prompt-python.zsh``)::
+
+   Alternatively, you could also configure directly your prompt in ``~/.zshrc`` (remove the definition in ``git-prompt-python.zsh``)::
 
 	# an example prompt
 	PROMPT='%B%m%~%b$(git_super_status) %# '
 
-#. You may also redefine the function ``git_super_status`` to adapt it
- to your needs (to change the order in which the information is
- displayed). You may also change a number of variables (the name of
- which start with ``ZSH_THEME_GIT_PROMPT_``) to change the appearance
- of the prompt. Take a look in the file ``git-prompt-python.zsh`` to
- see how the function ``git_super_status`` is defined, and what
- variables are available.
+#. You may also redefine the function ``git_super_status`` to adapt it to your needs (to change the order in which the information is displayed). You may also change a number of variables (the name of which start with ``ZSH_THEME_GIT_PROMPT_``) to change the appearance of the prompt. Take a look in the file ``git-prompt-python.zsh`` to see how the function ``git_super_status`` is defined, and what variables are available.
 #. Go in a git repository and test it!
 
 **Enjoy!**
