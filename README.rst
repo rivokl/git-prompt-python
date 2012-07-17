@@ -39,7 +39,7 @@ The symbols are as follows:
 	:✖n: there are ``n`` unmerged files
 	:✚n: there are ``n`` changed but *unstaged* files
 	:⚡n: there are ``n`` untracked files (for ``n`` < 10)
-	:⚡…: there are a few untracked files
+	:⚡…: there are many more untracked files
 
 * Branch Tracking Symbols
 	:↑n: ahead of remote by ``n`` commits
