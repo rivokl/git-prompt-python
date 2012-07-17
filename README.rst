@@ -1,5 +1,5 @@
 Informative and efficient git prompt for zsh
-==============================
+============================================
 
 A ``zsh`` prompt that displays information about the current git repository.
 In particular the branch name, difference with remote branch, number of files staged, changed, etc.
