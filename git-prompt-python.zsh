@@ -77,16 +77,19 @@ fill_space() {
     ((termwidth=${COLUMNS} - 1))
 
     local pwd_width=${#${(%):-%~}}
-    local git_width=${#$(git_super_status)}
-    if [ $git_width != 0 ]; then
-	((git_width=$git_width + 10))
-    fi
-    # local uh_width=${#$(user_and_host)}
+
+    local zero='%([BSUbfksu]|([FB]|){*})'
+
+    local git_pr=$(git_super_status)
+    local git_width=${#${(S%%)git_pr//$~zero/}}
+
+    local uh_pr=$(user_and_host)
+    local uh_width=${#${(S%%)uh_pr//$~zero/}}
     
-    spacing="\${(l.(($termwidth - ($pwd_width + $git_width + 11) ))..${char}.)}"
+    spacing="\${(l.(($termwidth - ($pwd_width + $git_width + $uh_width) ))..${char}.)}"
 
     # local spacing=""
-    # ((termwidth=$termwidth - ($pwd_width + 11)))
+    # ((termwidth=$termwidth - ($pwd_width + $git_width + $uh_width)))
     # for k in {1..$termwidth}; do
     # 	spacing="${spacing} "
     # done
