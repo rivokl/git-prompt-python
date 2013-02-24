@@ -23,6 +23,8 @@ chpwd_functions+='chpwd_update_git_vars'
 precmd_functions+='precmd_titlebar'
 preexec_functions+='preexec_titlebar'
 
+# precmd_functions+='fill_space'
+
 # Load colors
 autoload -U colors
 colors
@@ -54,19 +56,41 @@ ZSH_THEME_GIT_PROMPT_UNTRACKED_MANY="…"
 ZSH_THEME_GIT_PROMPT_CLEAN="${b_green}✔"
 
 
-PROMPT='%B%~%b$(git_super_status)
-%# ${reset}'
+PROMPT='%B%~%b$(git_super_status)${(e)spacing}$(user_and_host)
+${reset}%# '
 
-RPROMPT='$(user_and_host) %B%t%b${reset}'
+RPROMPT='${red}%B%t%b${reset}'
 
 user_and_host() {
     local UH
     if [ "`id -u`" -eq 0 ] || [[ "$USER" = 'root' ]]; then
-	UH="${root_color}%m" 
+        UH="${root_color}%m"
     else
         UH="${user_color}%n@%m"
     fi
     echo "$UH"
+}
+
+fill_space() {
+    local char=' '
+    local termwidth
+    ((termwidth=${COLUMNS} - 1))
+
+    local pwd_width=${#${(%):-%~}}
+    local git_width=${#$(git_super_status)}
+    if [ $git_width != 0 ]; then
+	((git_width=$git_width + 10))
+    fi
+    # local uh_width=${#$(user_and_host)}
+    
+    spacing="\${(l.(($termwidth - ($pwd_width + $git_width + 11) ))..${char}.)}"
+
+    # local spacing=""
+    # ((termwidth=$termwidth - ($pwd_width + 11)))
+    # for k in {1..$termwidth}; do
+    # 	spacing="${spacing} "
+    # done
+    # echo $spacing
 }
 
 git_super_status() {
