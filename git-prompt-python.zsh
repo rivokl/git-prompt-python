@@ -23,7 +23,7 @@ chpwd_functions+='chpwd_update_git_vars'
 precmd_functions+='precmd_titlebar'
 preexec_functions+='preexec_titlebar'
 
-# precmd_functions+='fill_space'
+precmd_functions+='fill_space'
 
 # Load colors
 autoload -U colors
@@ -71,8 +71,8 @@ user_and_host() {
     echo "$UH"
 }
 
-fill_space() {
-    local char=' '
+function fill_space() {
+    local char='-'
     local termwidth
     ((termwidth=${COLUMNS} - 1))
 
@@ -91,7 +91,7 @@ fill_space() {
     # local spacing=""
     # ((termwidth=$termwidth - ($pwd_width + $git_width + $uh_width)))
     # for k in {1..$termwidth}; do
-    # 	spacing="${spacing} "
+    # 	spacing="${spacing}${char}"
     # done
     # echo $spacing
 }
