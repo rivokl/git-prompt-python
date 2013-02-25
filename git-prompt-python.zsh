@@ -72,7 +72,7 @@ user_and_host() {
 }
 
 function fill_space() {
-    local char='-'
+    local char=' '
     local termwidth
     ((termwidth=${COLUMNS} - 1))
 
